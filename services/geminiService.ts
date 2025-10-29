@@ -1,24 +1,24 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 
+// Initialize the client once at the module level.
+// This is more efficient than creating it on every request.
 const API_KEY = process.env.API_KEY;
+const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 
-if (!API_KEY) {
-  // This is a fallback for development. In a real environment, the key should be set.
-  console.warn("API_KEY environment variable is not set. The app may not function correctly.");
+if (!ai) {
+  console.warn("API_KEY environment variable is not set. The app will not function correctly.");
 }
-
-const getAIClient = () => {
-  if (!process.env.API_KEY) {
-    throw new Error("Gemini API key is not configured.");
-  }
-  return new GoogleGenAI({ apiKey: process.env.API_KEY });
-};
 
 const model = 'gemini-2.5-flash-image';
 
 const processImage = async (base64ImageData: string, mimeType: string, prompt: string): Promise<string> => {
+  // Provide a clear error message if the API key is missing.
+  // This is the most likely cause of failure in a deployed environment like Vercel.
+  if (!ai) {
+    throw new Error("Gemini API key not configured. Please set the API_KEY environment variable in your deployment settings.");
+  }
+  
   try {
-    const ai = getAIClient();
     const response = await ai.models.generateContent({
       model,
       contents: {
@@ -52,6 +52,7 @@ const processImage = async (base64ImageData: string, mimeType: string, prompt: s
     if (errorMessage.includes('API key not valid')) {
         throw new Error("The configured API key is invalid. Please check your configuration.");
     }
+    // Re-throw a generic error for other API issues.
     throw new Error("Failed to process image with the AI model. Please try again.");
   }
 };

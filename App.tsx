@@ -51,7 +51,7 @@ export default function App() {
   }, [originalImage]);
 
   const handleProcessImage = useCallback(async (
-    processingFunction: (base64: string, mimeType: string) => Promise<string>
+    processingFunction: (base64: string, mimeType: string, ...args: any[]) => Promise<string>
   ) => {
     if (!originalImage) return;
 
@@ -99,6 +99,11 @@ export default function App() {
           <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded-lg mb-6" role="alert">
             <strong className="font-bold">Error:</strong>
             <span className="block sm:inline ml-2">{error}</span>
+            {error.includes("API_KEY") && (
+              <p className="text-sm mt-2 text-red-300">
+                  <strong>Developer Hint:</strong> This error usually means the API key is missing from your deployment environment (like Vercel). Make sure you have set the <code>API_KEY</code> environment variable in your project's settings.
+              </p>
+            )}
           </div>
         )}
 
