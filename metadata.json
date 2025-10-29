@@ -1,0 +1,5 @@
+{
+  "name": "Copy of AI Image Background Remover & Editor",
+  "description": "A responsive and professional web application to remove image backgrounds or edit them using text prompts powered by the Gemini 2.5 Flash Image model.",
+  "requestFramePermissions": []
+}
